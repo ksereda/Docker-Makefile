@@ -1,10 +1,10 @@
 # Makefile
 
-postgres_host=post-service
-postgres_db=continuous_delivery
+postgres_host=localhost:5432
+postgres_db=test
 postgres_user=postgres
 postgres_password=postgresPassword
-rabbitmq_host=rabb-service
+rabbitmq_host=localhost
 rabbitmq_default_user=admin
 rabbitmq_default_password=admin
 rabbitmq_default_vhost=/
@@ -15,21 +15,9 @@ project_home=$(shell pwd)
 
 up: create-services
 
-run: run-app
-
 data: add-data
 
 down: clean-services
-
-build: build-app
-
-build-data: build-app-data
-
-re-build: re-build-app
-
-
-up-work-env:
-	make create-netw
 
 start-services:
 	cd docker && docker-compose start
@@ -67,73 +55,3 @@ add-data:
 
 clean-services:
 	cd docker && docker-compose down
-
-clean-all-services:
-	make stop-services
-	make down
-
-down-test-env:
-	docker stop post-service-test
-	docker rm post-service-test
-	docker stop rabb-service-test
-	docker rm rabb-service-test
-
-clean-build:
-	docker stop build
-	docker rm build
-
-clean-all:
-	docker stop continuous_delivery
-	docker rm continuous_delivery
-	docker rmi inhouse:cd
-	make clean-all-services
-	docker network rm test1
-
-build-script:
-	touch build_script
-	echo cd /root > build_script
-	echo /root/gradlew build -x test >> build_script
-
-up-test-env:
-	docker-compose up -d rabbitmq_test
-
-build-jar-test:
-	docker run --name build -i --net test-network \
-	-v ${project_home}:/root \
-	-e POSTGRES_HOST=${POSTGRES_HOST} \
-	-e POSTGRES_DB=${POSTGRES_DB} \
-	-e POSTGRES_USER=${POSTGRES_USER} \
-	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-	-e RABBITMQ_HOST=${RABBITMQ_HOST} \
-	-e RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER} \
-	-e RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS} \
-	openjdk:8-jdk /bin/bash < build_script
-
-create-netw:
-	docker network create test1
-
-build-image:
-	docker build -t inhouse:cd .
-	make clean-build
-
-build-test:
-	make build-script
-	make up-test-env
-	make build-jar-test
-	make down-test-env
-
-run-build:
-	docker build -t inhouse:cd .
-	make clean-build
-	make run
-
-build-app:
-	make build-test
-	make up
-	make run-build
-
-build-app-data:
-	make build-test
-	make up
-	make data
-	make run-build
