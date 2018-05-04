@@ -1,7 +1,7 @@
 # Makefile
 
 postgres_host=localhost:5432
-postgres_db=test
+postgres_db=delivery
 postgres_user=postgres
 postgres_password=postgresPassword
 rabbitmq_host=localhost
@@ -14,6 +14,8 @@ project_home=$(shell pwd)
 ######################################################
 
 up: create-services
+
+run: run-app
 
 data: add-data
 
@@ -39,7 +41,7 @@ create-services:
 	cd docker && docker-compose exec -u postgres postgres psql -c "create database cdp_mailer;"
 
 run-app:
-	docker run --name continuous_delivery -i --net test1 \
+	docker run --name delivery -i --net test1 \
 	-e POSTGRES_HOST=${postgres_host} \
 	-e POSTGRES_DB=${postgres_db} \
 	-e POSTGRES_USER=${postgres_user} \
@@ -48,7 +50,7 @@ run-app:
 	-e RABBITMQ_DEFAULT_USER=${rabbitmq_default_user} \
 	-e RABBITMQ_DEFAULT_PASSWORD=${rabbitmq_default_password} \
 	-p 8080:8080 \
-	inhouse:cd
+	delivery:d
 
 add-data:
 	cd docker && docker-compose exec -u postgres postgres psql -d ${postgres_db} -f /home/postgres/cdp_dump.sql
