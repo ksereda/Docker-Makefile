@@ -61,3 +61,9 @@ clean-services:
 clean-all-services:
 	make stop-services
 	make down
+
+down-test-env:
+	docker stop post-service-test
+	docker rm post-service-test
+	docker stop rabb-service-test
+	docker rm rabb-service-test
