@@ -57,3 +57,7 @@ add-data:
 
 clean-services:
 	cd docker && docker-compose down
+
+clean-all-services:
+	make stop-services
+	make down
