@@ -1,0 +1,2 @@
+cd /root
+/root/gradlew build -x test
