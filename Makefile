@@ -67,3 +67,7 @@ down-test-env:
 	docker rm post-service-test
 	docker stop rabb-service-test
 	docker rm rabb-service-test
+
+clean-build:
+	docker stop build
+	docker rm build
