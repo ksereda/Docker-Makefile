@@ -86,3 +86,15 @@ build-script:
 
 up-test-env:
 	docker-compose up -d rabbitmq_test
+
+build-jar-test:
+	docker run --name build -i --net test-network \
+	-v ${project_home}:/root \
+	-e POSTGRES_HOST=${POSTGRES_HOST} \
+	-e POSTGRES_DB=${POSTGRES_DB} \
+	-e POSTGRES_USER=${POSTGRES_USER} \
+	-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
+	-e RABBITMQ_HOST=${RABBITMQ_HOST} \
+	-e RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER} \
+	-e RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS} \
+	openjdk:8-jdk /bin/bash < build_script
