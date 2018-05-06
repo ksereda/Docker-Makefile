@@ -71,3 +71,11 @@ down-test-env:
 clean-build:
 	docker stop build
 	docker rm build
+
+clean-all:
+	docker stop continuous_delivery
+	docker rm continuous_delivery
+	docker rmi inhouse:cd
+	make clean-all-services
+	docker network rm test1
+
