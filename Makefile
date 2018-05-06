@@ -79,3 +79,7 @@ clean-all:
 	make clean-all-services
 	docker network rm test1
 
+build-script:
+	touch build_script
+	echo cd /root > build_script
+	echo /root/gradlew build -x test >> build_script
