@@ -83,3 +83,6 @@ build-script:
 	touch build_script
 	echo cd /root > build_script
 	echo /root/gradlew build -x test >> build_script
+
+up-test-env:
+	docker-compose up -d rabbitmq_test
