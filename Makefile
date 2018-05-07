@@ -98,3 +98,16 @@ build-jar-test:
 	-e RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER} \
 	-e RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS} \
 	openjdk:8-jdk /bin/bash < build_script
+
+create-netw:
+	docker network create test1
+
+build-image:
+	docker build -t inhouse:cd .
+	make clean-build
+
+build-test:
+	make build-script
+	make up-test-env
+	make build-jar-test
+	make down-test-env
