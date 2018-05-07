@@ -111,3 +111,8 @@ build-test:
 	make up-test-env
 	make build-jar-test
 	make down-test-env
+
+run-build:
+	docker build -t inhouse:cd .
+	make clean-build
+	make run
