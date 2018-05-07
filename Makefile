@@ -113,7 +113,7 @@ build-test:
 	make down-test-env
 
 run-build:
-	docker build -t inhouse:cd .
+	docker build -t delivery:d .
 	make clean-build
 	make run
 
