@@ -121,3 +121,9 @@ build-app:
 	make build-test
 	make up
 	make run-build
+
+build-app-data:
+	make build-test
+	make up
+	make data
+	make run-build
