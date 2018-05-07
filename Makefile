@@ -116,3 +116,8 @@ run-build:
 	docker build -t inhouse:cd .
 	make clean-build
 	make run
+
+build-app:
+	make build-test
+	make up
+	make run-build
