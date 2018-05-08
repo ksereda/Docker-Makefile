@@ -45,3 +45,17 @@ services:
           - test_network
         labels:
           container_group: test_env
+
+
+  rabbitmq_test:
+        container_name: rabb-service-test
+        image: rabbitmq:3-management
+        environment:
+          - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+          - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+        depends_on:
+          - postgres_test
+        networks:
+          - test_network
+        labels:
+          container_group: test_env
