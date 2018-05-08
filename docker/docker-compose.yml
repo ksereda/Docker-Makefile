@@ -59,3 +59,23 @@ services:
           - test_network
         labels:
           container_group: test_env
+
+
+    application:
+        container_name: build
+        image: openjdk:8-jdk
+        environment:
+          - POSTGRES_HOST=${POSTGRES_HOST}
+          - POSTGRES_DB=${POSTGRES_DB}
+          - POSTGRES_USER=${POSTGRES_USER}
+          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+          - RABBITMQ_HOST=${RABBITMQ_HOST}
+          - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+          - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS}
+        volumes:
+          - .:/data
+  #        - ${project_home}:/root
+        command:
+          ./data/build_script.sh
+  #      ./data/build_script.sh
+  #      openjdk:8-jdk /bin/bash < build_script
