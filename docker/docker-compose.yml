@@ -74,11 +74,8 @@ services:
           - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS}
         volumes:
           - .:/data
-  #        - ${project_home}:/root
         command:
           ./data/build_script.sh
-  #      ./data/build_script.sh
-  #      openjdk:8-jdk /bin/bash < build_script
 
 
 networks:
