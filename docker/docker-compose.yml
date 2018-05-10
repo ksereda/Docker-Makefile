@@ -81,17 +81,6 @@ services:
   #      openjdk:8-jdk /bin/bash < build_script
 
 
-
-#  application:
-#      container_name: build
-#      image: openjdk:8-jdk
-#      environment:
-#        - .env
-#      command:
-#        - ls
-
-
-
 networks:
     work_network:
     test_network:
