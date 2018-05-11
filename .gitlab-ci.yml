@@ -1,0 +1,40 @@
+image: docker:latest
+services:
+  - docker:dind
+
+
+stages:
+  - build
+  - test
+  - package
+  - deploy
+
+
+variables:
+    DOCKER_DRIVER: overlay2
+    IMAGE_NAME: 431611288834.dkr.ecr.us-east-1.amazonaws.com/continuous_delivery
+    IMAGE_TAG: ${CI_COMMIT_REF_NAME}-${CI_PIPELINE_ID}
+    AWS_REGION: us-east-1
+
+
+
+###########################
+# Build
+###########################
+
+build-jar:
+  stage: build
+  image: openjdk:8-jdk
+  before_script:
+    - export GRADLE_USER_HOME=`pwd`/.gradle
+  script: "./gradlew assemble"
+  artifacts:
+    paths:
+      - backend/build/libs/*.jar
+    expire_in: 2 week
+  cache:
+    paths:
+      - .gradle/wrapper
+      - .gradle/caches
+      - build/nodejs
+
