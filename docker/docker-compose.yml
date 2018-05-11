@@ -7,7 +7,7 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - ${PWD}/db_migration/cdp_dump.sql:/home/postgres/cdp_dump.sql
+      - ${PWD}/db_migration/delivery_dump.sql:/home/postgres/delivery_dump.sql
     ports:
       - "5432:5432"
     networks:
