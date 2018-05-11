@@ -1,0 +1,83 @@
+version: '3'
+services:
+  postgres:
+    container_name: post-service
+    image: postgres:9-alpine
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ${PWD}/db_migration/delivery_dump.sql:/home/postgres/delivery_dump.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - work_network
+    labels:
+      container_group: work_env
+
+
+  rabbitmq:
+    container_name: rabb-service
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_DEFAULT_VHOST}
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    depends_on:
+      - postgres
+    networks:
+      - work_network
+    labels:
+      container_group: work_env
+
+
+  postgres_test:
+        container_name: post-service-test
+        image: postgres
+        environment:
+          - POSTGRES_USER=${POSTGRES_USER}
+          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+          - POSTGRES_DB=${POSTGRES_DB}
+        networks:
+          - test_network
+        labels:
+          container_group: test_env
+
+
+  rabbitmq_test:
+        container_name: rabb-service-test
+        image: rabbitmq:3-management
+        environment:
+          - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+          - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+        depends_on:
+          - postgres_test
+        networks:
+          - test_network
+        labels:
+          container_group: test_env
+
+
+    application:
+        container_name: build
+        image: openjdk:8-jdk
+        environment:
+          - POSTGRES_HOST=${POSTGRES_HOST}
+          - POSTGRES_DB=${POSTGRES_DB}
+          - POSTGRES_USER=${POSTGRES_USER}
+          - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+          - RABBITMQ_HOST=${RABBITMQ_HOST}
+          - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+          - RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS}
+        volumes:
+          - .:/data
+        command:
+          ./data/build_script.sh
+
+
+networks:
+    work_network:
+    test_network:
