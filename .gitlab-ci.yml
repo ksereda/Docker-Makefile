@@ -18,9 +18,7 @@ variables:
 
 
 
-###########################
 # Build
-###########################
 
 build-jar:
   stage: build
@@ -39,6 +37,8 @@ build-jar:
       - build/nodejs
 
 
+
+# Test
 
 test-unit:
   stage: test
@@ -64,3 +64,27 @@ test-unit:
       paths:
         - backend/build/reports/tests/test/
       expire_in: 2 week
+
+
+
+
+# Package
+
+.registry-auth-script: &registry_auth
+  - |
+    docker run --rm \
+               -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+               -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+               aws ecr get-login --no-include-email --region ${AWS_REGION} | sh
+
+package-docker:
+  stage: package
+  before_script: *registry_auth
+  script:
+    - docker build -t ${IMAGE_NAME}:${IMAGE_TAG} -f docker/Dockerfile .
+    - docker push ${IMAGE_NAME}:${IMAGE_TAG}
+  only:
+    - mvp
+    - sprint
+    - staging
+    - master
