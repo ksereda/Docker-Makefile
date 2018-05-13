@@ -38,3 +38,29 @@ build-jar:
       - .gradle/caches
       - build/nodejs
 
+
+
+test-unit:
+  stage: test
+  image: openjdk:8-jdk
+  variables:
+    POSTGRES_HOST: "localhost:5432"
+    POSTGRES_DB: "delivery"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "postgresPassword"
+    RABBITMQ_HOST: "localhost"
+    RABBITMQ_DEFAULT_USER: "admin"
+    RABBITMQ_DEFAULT_PASS: "admin"
+    RABBITMQ_DEFAULT_VHOST: "/"
+  services:
+    - name: postgres
+      alias: $POSTGRES_HOST
+    - name: rabbitmq
+      alias: $RABBITMQ_HOST
+  script:
+    - ./gradlew check
+  artifacts:
+      when: always
+      paths:
+        - backend/build/reports/tests/test/
+      expire_in: 2 week
