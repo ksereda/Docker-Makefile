@@ -88,3 +88,40 @@ package-docker:
     - sprint
     - staging
     - master
+
+
+
+
+
+
+# Deploy
+
+.prepare-key-script: &prepare_key
+  - apk add --no-cache openssh-client
+  - eval $(ssh-agent -s)
+  - echo "$DEPLOY_KEY" | tr -d '\r' | ssh-add - > /dev/null
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan $DEPLOY_HOST >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+
+
+deploy-production:
+  stage: deploy
+  variables:
+    DEPLOY_KEY: $DEPLOY_PRODUCTION_KEY
+    DEPLOY_USER: ubuntu
+    DEPLOY_HOST: 192.168.0.1
+    CONTAINER_NAME: delivery
+    CONTAINER_EXT_PORT: 8899
+    POSTGRES_HOST: localhost:5432
+    POSTGRES_DB: delivery
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: $PRODUCTION_POSTGRES_PASSWORD
+    RABBITMQ_HOST: localhost
+    RABBITMQ_DEFAULT_USER: admin
+    RABBITMQ_DEFAULT_PASS: $PRODUCTION_RABBITMQ_PASSWORD
+    RABBITMQ_DEFAULT_VHOST: /
+    APPLICATION_DOMAIN: https://delivery.com
+  before_script: *prepare_key
+  script: *deploy_to_host
