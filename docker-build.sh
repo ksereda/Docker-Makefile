@@ -2,7 +2,7 @@
 
 # ENVIRONMENT VARIABLES
 POSTGRES_HOST=post-service
-POSTGRES_DB=continuous_delivery
+POSTGRES_DB=delivery_service
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgresPassword
 
@@ -55,7 +55,7 @@ docker run --name build -i --link=service-postgres:${POSTGRES_HOST} --link=servi
                              openjdk:8-jdk /bin/bash < build_script
 
 # BUILD IMAGE
-docker build -t inhouse:cd .
+docker build -t delivery_service:ds .
 
 #
 ## RUN CLEANING
@@ -63,10 +63,8 @@ docker build -t inhouse:cd .
 #rm build_script
 
 
-
-
 # RUN APP
-docker run --name continuous_delivery -i \
+docker run --name delivery_service -i \
                    --link=service-postgres:${POSTGRES_HOST} --link=service-rabbit:${RABBITMQ_HOST} \
                    -e POSTGRES_HOST=${POSTGRES_HOST} \
                    -e POSTGRES_DB=${POSTGRES_DB} \
@@ -76,4 +74,4 @@ docker run --name continuous_delivery -i \
                    -e RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER} \
                    -e RABBITMQ_DEFAULT_PASSWORD=${RABBITMQ_DEFAULT_PASS} \
                    -p 8080:8080 \
-                   inhouse:cd
+                   delivery_service:ds
